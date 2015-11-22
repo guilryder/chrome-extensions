@@ -16,6 +16,7 @@ function requestUpdateTitle() {
   // Detect the initial and subsequent, programmatic title changes.
   if (last_postprocessed_title !== document.title) {
     last_original_title = document.title;
+    last_formatted_title = null;
   }
 
   chrome.extension.sendRequest(
