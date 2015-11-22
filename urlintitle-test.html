@@ -1,0 +1,108 @@
+<head>
+</head>
+
+<script>
+var lastTitleMutationDate = new Date();
+var titleMutationStatus = '';
+var lastTitleSet = null;
+var mutationObserver = null;
+
+function initialize() {
+  onTitleChange();
+  window.setInterval(updateStatus, 1000);
+}
+
+function onTitleChange() {
+  var currentTitle = document.title;
+
+  lastTitleMutationDate = new Date();
+  titleMutationStatus = 'currentTitle: "' + currentTitle + '"';
+
+  updateStatus('onTitleChange');
+
+  if (mutationObserver) {
+    return;
+  }
+  var titleElem = document.querySelector('head > title');
+  if (!titleElem) {
+    return;
+  }
+  mutationObserver = new window.MutationObserver(
+    function(mutations) {
+      onTitleChange();
+    }
+  );
+  alert(titleElem);
+  mutationObserver.observe(
+      titleElem,
+      { subtree: true, characterData: true, childList: true });
+}
+
+function updateStatus(reason) {
+  if (reason) {
+    console.log('updateStatus - ' + reason);
+  }
+
+  var statusLines = [];
+
+  statusLines.push('document.title = ' + document.title);
+
+  var titleElem = document.getElementsByTagName('title')[0];
+  var titleText = titleElem ? titleElem.textContent : '';
+  statusLines.push('<title> = "' + titleText + '"');
+
+  statusLines.push('lastTitleMutationDate = ' + lastTitleMutationDate);
+  statusLines.push('titleMutationStatus = ' + titleMutationStatus);
+
+  var LOCATION_FIELDS = {
+    "protocol": "http",
+    "hostname": "www.example.com",
+    "port": 8080,
+    "pathname": "/sub/path",
+    "search": "?arg=value",
+    "hash": "#hash",
+  };
+  for (var field in LOCATION_FIELDS) {
+    statusLines.push('location.' + field + ' = ' + document.location[field]);
+  }
+
+  document.getElementById('status').textContent = statusLines.join('\n');
+}
+
+function setTitle(title) {
+  document.title = title;
+}
+
+function setState(title, url) {
+  window.history.pushState(title + '/' + url, title, url);
+}
+
+window.addEventListener('load', initialize);
+window.addEventListener('popstate', function() {
+  updateStatus('popstate');
+});
+</script>
+
+<p>
+  <button onclick="setTitle('Title A')">Set title A</button>
+  <button onclick="setTitle('Title B')">Set title B</button>
+  <button onclick="setTitle('Title C')">Set title C</button>
+  <button onclick="setTitle(null)">Set title null</button>
+  <button onclick="setTitle('')">Set title ''</button>
+</p>
+
+<p>
+  <button onclick="setState('State A', '/sub/page?a=1#b=2')">Set state A - /sub/page?a=1#b=2</button>
+  <button onclick="setState('State B2', '?a=2#b=3')">Set state B2 - ?a=2#b=3</button>
+  <button onclick="setState('State B3', '?a=3#b=4')">Set state B3 - ?a=3#b=4</button>
+  <button onclick="setState('State C', '#b=5')">Set state C - #b=5</button>
+</p>
+
+<p>
+  <div><a href="/title-ro.html">/title-ro.html</a></div>
+  <div><a href="?a=1#h=2">?a=1#h=2</a></div>
+  <div><a href="#h=3">#h=3</a></div>
+  <div><a href="#h=4">#h=4</a></div>
+</p>
+
+<pre id="status"></pre>

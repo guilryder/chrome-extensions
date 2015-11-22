@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Apps in new tab",
+  "version": "1.0.1",
+
+  "description": "Shows the apps list when opening a new tab, after a delay to allow typing a URL right away.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+
+  "permissions": [
+    "tabs"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "apps.html"
+  }
+}
+

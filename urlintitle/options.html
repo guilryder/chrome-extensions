@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Url in Title Extension Options</title>
+
+  <style>
+    body {
+      font-size: 16px;
+      min-width: 700px;
+    }
+
+    th, td {
+      padding: 5px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: .5em;
+    }
+
+    #example {
+      background: #eee;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+
+    code {
+      white-space: nowrap;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    #status {
+      margin-left: 1em;
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <p>
+    <label for="format">Tab title format:</label>
+    <input id="format" size="50" spellcheck="false"/>
+  </p>
+
+  <p><label>Example:</label> <span id="example"></span></p>
+
+  <table id="tags-table" cellpadding="2" cellspacing="0" border="1" bordercolor="#000">
+  <tr>
+    <th>Tag name</th>
+    <th>Description</th>
+    <th>Example value</th>
+  </tr>
+  </table>
+
+  <p>
+    <button id="restore">Restore to default</button>
+    <button id="save">Save</button>
+    <span id="status"></span>
+  </p>
+
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Url in title",
+  "version": "2.0.0",
+
+  "description": "Appends the domain name of each tab to their title.",
+
+  "author": "Guillaume Ryder",
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [{
+    "matches": [
+      "http://*/*",
+      "https://*/*"
+    ],
+    "js": ["page_hook.js"],
+    "run_at": "document_end"
+  }],
+  "content_security_policy": "default-src 'none'; style-src 'unsafe-inline'; script-src 'self'",
+
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+
+  "permissions": [
+    "storage"
+  ]
+}
