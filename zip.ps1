@@ -9,7 +9,7 @@ foreach ($extension in $Extensions) {
   $extension_zip = "C:\Users\Guillaume\Google Drive\Perso\Chrome extensions\${extension}.zip"
   echo "$extension ..."
   rm $extension_zip
-  zip.exe -jo9 $extension_zip "$extension/*"
+  zip.exe -jo9 $extension_zip "$extension/src/*"
 }
 
 Pop-Location
