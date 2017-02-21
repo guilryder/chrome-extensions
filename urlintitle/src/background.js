@@ -16,7 +16,7 @@ var DEFAULT_OPTIONS = {
 // Name to example value.
 var LOCATION_FIELDS = {
   "protocol": "http",
-  "hostname": "www.example.com",
+  "hostname": "www.xn--exmpl-hra2b.com",
   "port": 8080,
   "pathname": "/sub/path",
   "search": "?arg=value",
@@ -52,9 +52,19 @@ var TAGS = {
   },
   "hostname": {
     compute: function(location, title) {
+      try {
+        return toUnicode(location.hostname);
+      } catch(e) {
+        return location.hostname;
+      }
+    },
+    description: "The URL hostname, converted from Punycode to Unicode.",
+  },
+  "hostnameascii": {
+    compute: function(location, title) {
       return location.hostname;
     },
-    description: "The URL hostname.",
+    description: "The raw URL hostname, not converted from Punycode to Unicode.",
   },
   "port": {
     compute: function(location, title) {

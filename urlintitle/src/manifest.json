@@ -7,7 +7,7 @@
 
   "author": "Guillaume Ryder",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js", "punycode.js"]
   },
 
   "content_scripts": [{
