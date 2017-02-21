@@ -1,18 +1,20 @@
-var lib = chrome.extension.getBackgroundPage();
+'use strict';
 
-document.addEventListener('DOMContentLoaded', function() {
+const lib = chrome.extension.getBackgroundPage();
+
+document.addEventListener('DOMContentLoaded', () => {
   $('restore').addEventListener('click', restoreOptionsToDefault);
   $('save').addEventListener('click', saveOptions);
   $('format').addEventListener('input', updateExample);
 
-  var tags_table = $('tags-table');
-  for (var tag in lib.TAGS) {
-    var tag_name = '{' + tag + '}';
+  const tags_table = $('tags-table');
+  for (const tag in lib.TAGS) {
+    const tag_name = '{' + tag + '}';
 
-    var example_value = lib.formatPageTitle(
+    const example_value = lib.formatPageTitle(
         tag_name, lib.LOCATION_FIELDS, lib.EXAMPLE_TITLE);
 
-    var row = tags_table.insertRow(-1);
+    const row = tags_table.insertRow(-1);
     row.insertCell(-1).appendChild(createTextElem('kbd', tag_name));
     row.insertCell(-1).innerHTML = lib.TAGS[tag].description;
     row.insertCell(-1).appendChild(createTextElem('code', example_value));
@@ -27,14 +29,14 @@ function updateExample() {
 }
 
 function restoreOptions() {
-  lib.getOptions(function(options) {
+  lib.getOptions((options) => {
     $('format').value = options.format;
     updateExample();
   });
 }
 
 function restoreOptionsToDefault() {
-  lib.clearOptions(function() {
+  lib.clearOptions(() => {
     showOptionsSaved();
     restoreOptions();
   });
@@ -42,21 +44,17 @@ function restoreOptionsToDefault() {
 
 function saveOptions() {
   lib.setOptions(
-    {
-      format: $('format').value
-    },
-    function() {
+    {format: $('format').value},
+    () => {
       showOptionsSaved();
       updateExample();
-  });
+    });
 }
 
 function showOptionsSaved() {
-  var status = $('status');
+  const status = $('status');
   status.textContent = 'Options saved.';
-  setTimeout(function() {
-    status.textContent = '';
-  }, 1000);
+  setTimeout(() => status.textContent = '', 1000);
 }
 
 // Helpers
@@ -66,7 +64,7 @@ function $(id) {
 }
 
 function createTextElem(tag_name, text) {
-  var elem = document.createElement(tag_name);
+  const elem = document.createElement(tag_name);
   elem.textContent = text;
   return elem;
 }

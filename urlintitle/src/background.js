@@ -9,6 +9,8 @@
 // more security and stability: page titles change from time to time, are
 // language-dependent, and sometimes are too generic (e.g. "Login").
 
+'use strict';
+
 var DEFAULT_OPTIONS = {
   format: "{title} - {protocol}://{hostname}{port}/",
 };
@@ -23,7 +25,7 @@ var LOCATION_FIELDS = {
   "hash": "#hash",
 };
 
-var EXAMPLE_TITLE = 'My Example Page';
+var EXAMPLE_TITLE = "My Example Page";
 
 function getOptions(callback) {
   chrome.storage.sync.get(DEFAULT_OPTIONS, callback);
@@ -39,19 +41,15 @@ function clearOptions(callback) {
 
 var TAGS = {
   "title": {
-    compute: function(location, title) {
-      return title;
-    },
+    compute: (location, title) => title,
     description: "The page title.",
   },
   "protocol": {
-    compute: function(location, title) {
-      return location.protocol.replace(":", "");
-    },
+    compute: (location, title) => location.protocol.replace(":", ""),
     description: "The URL protocol, without '<code>://</code>' suffix.",
   },
   "hostname": {
-    compute: function(location, title) {
+    compute: (location, title) => {
       try {
         return toUnicode(location.hostname);
       } catch(e) {
@@ -61,64 +59,47 @@ var TAGS = {
     description: "The URL hostname, converted from Punycode to Unicode.",
   },
   "hostnameascii": {
-    compute: function(location, title) {
-      return location.hostname;
-    },
+    compute: (location, title) => location.hostname,
     description: "The raw URL hostname, not converted from Punycode to Unicode.",
   },
   "port": {
-    compute: function(location, title) {
-      return location.port && (":" + location.port);
-    },
+    compute: (location, title) => location.port && (":" + location.port),
     description: "The URL port, prefixed with '<code>:</code>' if not empty.",
   },
   "path": {
-    compute: function(location, title) {
-      return location.pathname.replace(/^\/?/, "");
-    },
+    compute: (location, title) => location.pathname.replace(/^\/?/, ""),
     description: "The URL path, without '<code>/</code>' prefix.",
   },
   "args": {
-    compute: function(location, title) {
-      return location.search;
-    },
+    compute: (location, title) => location.search,
     description: "The URL arguments, prefixed with '<code>?</code>' if not empty.",
   },
   "hash": {
-    compute: function(location, title) {
-      return location.hash;
-    },
+    compute: (location, title) => location.hash,
     description: "The URL hash, prefixed with '<code>#</code>' if not empty.",
   },
 };
 
-var FORMAT_REGEXP = function() {
-  var tag_names = [];
-  for (tag in TAGS) {
-    tag_names.push(tag);
-  }
-  return new RegExp("{(" + tag_names.join("|") + ")}", "g");
-}();
+var FORMAT_REGEXP =
+    new RegExp("{(" + Object.keys(TAGS).join("|") + ")}", "g");
 
 function formatPageTitle(format, location, title) {
-  return format.replace(FORMAT_REGEXP, function(format, tag) {
-    return TAGS[tag].compute(location, title);
-  });
+  return format.replace(FORMAT_REGEXP,
+      (format, tag) => TAGS[tag].compute(location, title));
 }
 
-var REQUEST_HANDLERS = {
-  get_constants: function(request, sendResponse) {
+class RequestHandlers {
+  static get_constants(request, sendResponse) {
     sendResponse({LOCATION_FIELDS: LOCATION_FIELDS});
-  },
-  format_title: function(request, sendResponse) {
-    getOptions(function(options) {
+  }
+
+  static format_title(request, sendResponse) {
+    getOptions(options =>
       sendResponse(formatPageTitle(
-          options.format, request.location, request.title));
-    });
+          options.format, request.location, request.title)));
   }
 }
 
 chrome.extension.onRequest.addListener(
-  function(request, sender, sendResponse) {
-    REQUEST_HANDLERS[request.name](request, sendResponse);
-  });
+  (request, sender, sendResponse) =>
+    RequestHandlers[request.name](request, sendResponse));
