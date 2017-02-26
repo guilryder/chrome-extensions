@@ -10,6 +10,9 @@ let last_original_title = null;
 // The last formatted title before any browser post-processing.
 let last_formatted_title = null;
 
+// The last formatted_title_suffix returned by format_title_update.
+let last_formatted_title_suffix = null;
+
 // The last formatted title after browser post-processing (e.g. trimming).
 let last_postprocessed_title = null;
 
@@ -35,19 +38,22 @@ function updateTitle(constants) {
   // Ask the background script to format the title.
   chrome.extension.sendRequest(
       {
-        name: 'format_title',
+        name: 'format_title_update',
         location: location_copy,
         title: last_original_title,
+        previous_formatted_title_suffix: last_formatted_title_suffix,
       },
-      setFormattedTitle);
+      ({formatted_title, formatted_title_suffix}) =>
+        setFormattedTitle(formatted_title, formatted_title_suffix));
 }
 
-function setFormattedTitle(formatted_title) {
+function setFormattedTitle(formatted_title, formatted_title_suffix) {
   // Set the title only if it has changed, to avoid recursive notifications.
   if (last_formatted_title !== formatted_title) {
     last_formatted_title = formatted_title;
     document.title = formatted_title;
     last_postprocessed_title = document.title;
+    last_formatted_title_suffix = formatted_title_suffix;
   }
 
   // Register the observer now that 'head > title' is guaranteed to exist.

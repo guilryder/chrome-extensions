@@ -69,8 +69,10 @@ function updateStatus(reason) {
   document.getElementById('status').textContent = statusLines.join('\n');
 }
 
-function setTitle(title) {
-  document.title = title;
+function setTitle(titleFunction) {
+  const newTitle = titleFunction(document.title);
+  document.getElementById('titleLog').textContent = 'setTitle: ' + newTitle;
+  document.title = newTitle;
 }
 
 function setState(title, url) {
@@ -83,21 +85,30 @@ window.addEventListener('popstate', function() {
 });
 </script>
 
+<h2>Set title</h2>
 <p>
-  <button onclick="setTitle('Title A')">Set title A</button>
-  <button onclick="setTitle('Title B')">Set title B</button>
-  <button onclick="setTitle('Title C')">Set title C</button>
-  <button onclick="setTitle(null)">Set title null</button>
-  <button onclick="setTitle('')">Set title ''</button>
+  <button onclick="setTitle(old => 'Title A')">Title A</button>
+  <button onclick="setTitle(old => 'Title B')">Title B</button>
+  <button onclick="setTitle(old => null)">null</button>
+  <button onclick="setTitle(old => '')">empty</button>
 </p>
 
 <p>
-  <button onclick="setState('State A', '/sub/page?a=1#b=2')">Set state A - /sub/page?a=1#b=2</button>
-  <button onclick="setState('State B2', '?a=2#b=3')">Set state B2 - ?a=2#b=3</button>
-  <button onclick="setState('State B3', '?a=3#b=4')">Set state B3 - ?a=3#b=4</button>
-  <button onclick="setState('State C', '#b=5')">Set state C - #b=5</button>
+  <button onclick="setTitle(old => 'Prefix' + old)">Prefix</button>
+  <button onclick="setTitle(old => old + 'Suffix')">Suffix</button>
+  <button onclick="setTitle(old => '[' + old + ']')">Wrap</button>
+  <button onclick="setTitle(old => old.replace(/^.* - /, 'New - '))">Replace before ' - '</button>
 </p>
 
+<h2>Set state</h2>
+<p>
+  <button onclick="setState('State A', '/sub/page?a=1#b=2')">A - /sub/page?a=1#b=2</button>
+  <button onclick="setState('State B2', '?a=2#b=3')">B2 - ?a=2#b=3</button>
+  <button onclick="setState('State B3', '?a=3#b=4')">B3 - ?a=3#b=4</button>
+  <button onclick="setState('State C', '#b=5')">C - #b=5</button>
+</p>
+
+<h2>Navigate</h2>
 <p>
   <div><a href="/title-ro.html">/title-ro.html</a></div>
   <div><a href="?a=1#h=2">?a=1#h=2</a></div>
@@ -106,3 +117,4 @@ window.addEventListener('popstate', function() {
 </p>
 
 <pre id="status"></pre>
+<pre id="titleLog"></pre>

@@ -29,32 +29,28 @@ function updateExample() {
 }
 
 function restoreOptions() {
-  lib.getOptions((options) => {
+  lib.getOptions(options => {
     $('format').value = options.format;
     updateExample();
   });
 }
 
 function restoreOptionsToDefault() {
-  lib.clearOptions(() => {
-    showOptionsSaved();
-    restoreOptions();
-  });
+  lib.clearOptions(showOptionsSaved);
 }
 
 function saveOptions() {
   lib.setOptions(
-    {format: $('format').value},
-    () => {
-      showOptionsSaved();
-      updateExample();
-    });
+      {format: $('format').value},
+      showOptionsSaved);
 }
 
 function showOptionsSaved() {
   const status = $('status');
   status.textContent = 'Options saved.';
   setTimeout(() => status.textContent = '', 1000);
+
+  restoreOptions();
 }
 
 // Helpers

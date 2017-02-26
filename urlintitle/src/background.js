@@ -27,11 +27,19 @@ var LOCATION_FIELDS = {
 
 var EXAMPLE_TITLE = "My Example Page";
 
+function normalizeOptions(options) {
+  options.format = normalizeTitle(options.format);
+}
+
 function getOptions(callback) {
-  chrome.storage.sync.get(DEFAULT_OPTIONS, callback);
+  chrome.storage.sync.get(DEFAULT_OPTIONS, options => {
+    normalizeOptions(options);
+    callback(options);
+  });
 }
 
 function setOptions(options, callback) {
+  normalizeOptions(options);
   chrome.storage.sync.set(options, callback);
 }
 
@@ -83,9 +91,50 @@ var TAGS = {
 var FORMAT_REGEXP =
     new RegExp("{(" + Object.keys(TAGS).join("|") + ")}", "g");
 
+function normalizeTitle(title) {
+  return (title || '').trim().replace(/\s+/g, ' ');
+}
+
 function formatPageTitle(format, location, title) {
-  return format.replace(FORMAT_REGEXP,
-      (format, tag) => TAGS[tag].compute(location, title));
+  return normalizeTitle(format.replace(FORMAT_REGEXP,
+      (format, tag) => TAGS[tag].compute(location, title)));
+}
+
+/**
+ * previous_formatted_title_suffix: should be the formatted_title_suffix
+ *   value returned by the previous call to formatPageTitleUpdate().
+ *   Theoretically undefined but usually ok behavior if the format changes
+ *   between two calls.
+ */
+function formatPageTitleUpdate(
+    format, location, title, previous_formatted_title_suffix) {
+  let formatted_title_suffix;
+
+  // Heuristic to support pages that update their title and preserve the text
+  // that the extension appends, such as:
+  // document.title = "prefix" + document.title;
+  // Supports only formats like: "{title}..." that contain only one {title} tag.
+  const format_split = format.match(/^\{title\}([\s\S]*$)/);
+  if (format_split && !format_split[1].match(/\{title\}/g)) {
+    // Supported {title}-prefixed format: generate the title suffix.
+    formatted_title_suffix = formatPageTitle(format, location, '');
+
+    // Strip the previous suffix from the title if present, to avoid
+    // formatPageTitle() below appending another suffix to the previous one.
+    if (previous_formatted_title_suffix &&
+        title.endsWith(previous_formatted_title_suffix)) {
+      title = title.substring(
+          0, title.length - previous_formatted_title_suffix.length);
+    }
+  } else {
+    // Not a {title}-prefixed format.
+    formatted_title_suffix = null;
+  }
+
+  return {
+    formatted_title: formatPageTitle(format, location, title),
+    formatted_title_suffix: formatted_title_suffix,
+  };
 }
 
 class RequestHandlers {
@@ -93,10 +142,11 @@ class RequestHandlers {
     sendResponse({LOCATION_FIELDS: LOCATION_FIELDS});
   }
 
-  static format_title(request, sendResponse) {
+  static format_title_update(request, sendResponse) {
     getOptions(options =>
-      sendResponse(formatPageTitle(
-          options.format, request.location, request.title)));
+      sendResponse(formatPageTitleUpdate(
+          options.format, request.location, request.title,
+          request.previous_formatted_title_suffix)));
   }
 }
 
