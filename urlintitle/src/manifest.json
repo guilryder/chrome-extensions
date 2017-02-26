@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Url in title",
-  "version": "2.1.0",
+  "version": "2.2.0",
 
   "description": "Appends the domain name of each tab to their title.",
 
