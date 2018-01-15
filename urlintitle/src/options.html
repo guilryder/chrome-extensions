@@ -6,7 +6,7 @@
   <style>
     body {
       font-size: 16px;
-      min-width: 700px;
+      min-width: 750px;
     }
 
     th, td {
@@ -31,7 +31,24 @@
     }
 
     table {
+      width: 100%;
       border-collapse: collapse;
+      font-size: smaller;
+    }
+
+    .top-separator {
+      margin-top: .5em;
+    }
+
+    input[type="radio"], label.radio {
+      font-weight: normal;
+      vertical-align: middle;
+    }
+
+    textarea {
+      width: 100%;
+      height: 5em;
+      display: block;
     }
 
     #status {
@@ -49,7 +66,7 @@
 
   <p><label>Example:</label> <span id="example"></span></p>
 
-  <table id="tags-table" cellpadding="2" cellspacing="0" border="1" bordercolor="#000">
+  <table id="tags-table" border="1" bordercolor="#000">
   <tr>
     <th>Tag name</th>
     <th>Description</th>
@@ -57,11 +74,32 @@
   </tr>
   </table>
 
-  <p>
-    <button id="restore">Restore to default</button>
+  <div class="top-separator">
+    <b>Page URL filtering</b>
+  </div>
+  <input type="radio" name="url-filter-type"
+         id="url-filter-type-whitelist" value="whitelist">
+  <label for="url-filter-type-whitelist" class="radio">
+    <b>Whitelist:</b> update the titles of <i>only</i> the pages whose URL matches a line in the list.
+  </label>
+  <br>
+  <input type="radio" name="url-filter-type"
+         id="url-filter-type-blacklist" value="blacklist">
+  <label for="url-filter-type-blacklist" class="radio">
+    <b>Blacklist:</b> update the titles of all pages <i>except</i> those whose URL matches a line in the list.
+  </label>
+  <br>
+  <div class="top-separator">
+    <label for="url-filter-regexps">URL filters.</label>
+    One <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Syntax">regular expression</a> per line. A page is whitelisted or blacklisted if its full URL (including scheme, arguments, and hash) matches at least one regular expression in the list below.<br>
+  </div>
+  <textarea class="top-separator" id="url-filter-regexps" placeholder="Example: ^https://www\.example\.org/"></textarea>
+
+  <div class="top-separator">
+    <button id="restore">Reset to default</button>
     <button id="save">Save</button>
     <span id="status"></span>
-  </p>
+  </div>
 
   <script src="options.js"></script>
 </body>

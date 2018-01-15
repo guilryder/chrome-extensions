@@ -40,11 +40,17 @@ function updateTitle(constants) {
       {
         name: 'format_title_update',
         location: location_copy,
+        filtering_url: document.location.href,
         title: last_original_title,
         previous_formatted_title_suffix: last_formatted_title_suffix,
       },
-      ({formatted_title, formatted_title_suffix}) =>
-        setFormattedTitle(formatted_title, formatted_title_suffix));
+      result => {
+        if (result) {
+          setFormattedTitle(
+              result.formatted_title,
+              result.formatted_title_suffix);
+        }
+      });
 }
 
 function setFormattedTitle(formatted_title, formatted_title_suffix) {

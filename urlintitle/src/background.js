@@ -13,6 +13,8 @@
 
 var DEFAULT_OPTIONS = {
   format: "{title} - {protocol}://{hostname}{port}/",
+  url_filter_is_whitelist: false,
+  url_filter_regexps: [],
 };
 
 // Name to example value.
@@ -29,6 +31,9 @@ var EXAMPLE_TITLE = "My Example Page";
 
 function normalizeOptions(options) {
   options.format = normalizeTitle(options.format);
+  options.url_filter_is_whitelist = !!options.url_filter_is_whitelist;
+  options.url_filter_regexps =
+      (options.url_filter_regexps || []).filter(regexp => regexp != '');
 }
 
 function getOptions(callback) {
@@ -101,6 +106,16 @@ function formatPageTitle(format, location, title) {
 }
 
 /**
+ * Returns whether the given URL passes the filter (whitelist or blacklist).
+ */
+function shouldProcessUrl(options, url) {
+  const at_least_one_match =
+      options.url_filter_regexps.some(
+          regexp => url.search(new RegExp(regexp)) >= 0);
+  return at_least_one_match == options.url_filter_is_whitelist;
+}
+
+/**
  * previous_formatted_title_suffix: should be the formatted_title_suffix
  *   value returned by the previous call to formatPageTitleUpdate().
  *   Theoretically undefined but usually ok behavior if the format changes
@@ -144,9 +159,12 @@ class RequestHandlers {
 
   static format_title_update(request, sendResponse) {
     getOptions(options =>
-      sendResponse(formatPageTitleUpdate(
-          options.format, request.location, request.title,
-          request.previous_formatted_title_suffix)));
+      sendResponse(
+          shouldProcessUrl(options, request.filtering_url)
+              ? formatPageTitleUpdate(
+                  options.format, request.location, request.title,
+                  request.previous_formatted_title_suffix)
+              : null));
   }
 }
 

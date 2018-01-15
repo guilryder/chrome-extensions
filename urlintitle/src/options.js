@@ -2,6 +2,8 @@
 
 const lib = chrome.extension.getBackgroundPage();
 
+const REGEXPS_SEPARATOR = '\n';
+
 document.addEventListener('DOMContentLoaded', () => {
   $('restore').addEventListener('click', restoreOptionsToDefault);
   $('save').addEventListener('click', saveOptions);
@@ -31,6 +33,11 @@ function updateExample() {
 function restoreOptions() {
   lib.getOptions(options => {
     $('format').value = options.format;
+    $('url-filter-type-' +
+            (options.url_filter_is_whitelist ? 'whitelist' : 'blacklist'))
+        .checked = true;
+    $('url-filter-regexps').value =
+        (options.url_filter_regexps || []).join(REGEXPS_SEPARATOR);
     updateExample();
   });
 }
@@ -40,9 +47,26 @@ function restoreOptionsToDefault() {
 }
 
 function saveOptions() {
+  // Validate the URL filter regexps.
+  const url_filter_regexps =
+      $('url-filter-regexps').value.split(REGEXPS_SEPARATOR);
+  for (const regexp of url_filter_regexps) {
+    try {
+      new RegExp(regexp);
+    } catch (e) {
+      $('status').textContent =
+          'Invalid URL filter regular expression: ' + regexp;
+      return;
+    }
+  }
+
   lib.setOptions(
-      {format: $('format').value},
-      showOptionsSaved);
+    {
+      format: $('format').value,
+      url_filter_is_whitelist: $('url-filter-type-whitelist').checked,
+      url_filter_regexps: url_filter_regexps,
+    },
+    showOptionsSaved);
 }
 
 function showOptionsSaved() {
