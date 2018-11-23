@@ -1,0 +1,6 @@
+Appends the domain name of each tab to their title.
+Reformats the title of each tab according to its URL.
+
+This allows using utilities such as KeePass that auto-fill passwords according to the title of the current window.
+
+By default, only the protocol and domain name are appended to the title, but the options page allows full customization.
