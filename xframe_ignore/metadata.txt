@@ -1,0 +1,7 @@
+Developer tool that strips out the X-Frame-Options and Content-Security-Policy HTTP headers from the response to all requests.
+
+Should be used only temporarily and only for developement, testing, or troubleshooting purposes because it disables important browser security mechanisms.
+
+Reference information:
+https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Frame-Options
+https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy

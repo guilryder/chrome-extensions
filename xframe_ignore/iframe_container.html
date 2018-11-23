@@ -1,6 +1,19 @@
 <html>
-<body>
-<p>Parent
-<p><iframe src="iframe_content_xframe_http-equiv.html"></iframe>
-<p><iframe src="iframe_content_xframe_header.php"></iframe>
+<head>
+  <script>
+  function updateCustomIframeTarget() {
+    document.getElementById('custom_iframe').src =
+        document.getElementById('custom_iframe_target').value;
+  }
+  </script>
+</head>
+<body onload="updateCustomIframeTarget();">
+
+  <p><iframe src="iframe_content_xframe_http-equiv.html"></iframe>
+  <iframe src="iframe_content_xframe_header.php"></iframe>
+
+  <form onsubmit="updateCustomIframeTarget(); return false;">
+    <p><input id="custom_iframe_target" size="70" value="http://localhost"> <input type="submit" value="Go">
+    <p><iframe id="custom_iframe" width="800" height="600"></iframe>
+  </form>
 </body>
