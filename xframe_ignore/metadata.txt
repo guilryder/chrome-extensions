@@ -7,3 +7,5 @@ Should be used only temporarily and only for developement, testing, or troublesh
 Reference information:
 https://developer.mozilla.org/docs/Web/HTTP/Headers/X-Frame-Options
 https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy
+
+Source code: https://github.com/guilryder/chrome-extensions/tree/master/xframe_ignore

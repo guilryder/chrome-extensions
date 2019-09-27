@@ -3,3 +3,5 @@ https://chrome.google.com/webstore/detail/apps-in-new-tab/mpojaelnfgiajhilmojddk
 Restores the previous Chrome behavior for opening new tabs: shows the list of installed apps instead of the search page.
 
 Waits a little before showing the app list to avoid losing the URL bar selection, allowing to press Ctrl+T and type a URL right away.
+
+Source code: https://github.com/guilryder/chrome-extensions/tree/master/newtab
