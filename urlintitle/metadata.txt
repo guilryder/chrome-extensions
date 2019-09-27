@@ -1,3 +1,5 @@
+https://chrome.google.com/webstore/detail/apps-in-new-tab/mpojaelnfgiajhilmojddklffggldfbp
+
 Appends the domain name of each tab to their title.
 Reformats the title of each tab according to its URL.
 

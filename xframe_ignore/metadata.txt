@@ -1,3 +1,5 @@
+https://chrome.google.com/webstore/detail/ignore-x-frame-headers/gleekbfjekiniecknbkamfmkohkpodhe
+
 Developer tool that strips out the X-Frame-Options and Content-Security-Policy HTTP headers from the response to all requests.
 
 Should be used only temporarily and only for developement, testing, or troubleshooting purposes because it disables important browser security mechanisms.
