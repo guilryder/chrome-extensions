@@ -27,7 +27,10 @@ var LOCATION_FIELDS = {
   "hash": "#hash",
 };
 
-var EXAMPLE_TITLE = "My Example Page";
+var EXAMPLE_ENV = {
+  location: LOCATION_FIELDS,
+  title: "My Example Page",
+};
 
 function normalizeOptions(options) {
   options.format = normalizeTitle(options.format);
@@ -54,41 +57,41 @@ function clearOptions(callback) {
 
 var TAGS = {
   "title": {
-    compute: (location, title) => title,
+    compute: (env) => env.title,
     description: "The page title.",
   },
   "protocol": {
-    compute: (location, title) => location.protocol.replace(":", ""),
+    compute: (env) => env.location.protocol.replace(":", ""),
     description: "The URL protocol, without '<code>://</code>' suffix.",
   },
   "hostname": {
-    compute: (location, title) => {
+    compute: (env) => {
       try {
-        return toUnicode(location.hostname);
+        return toUnicode(env.location.hostname);
       } catch(e) {
-        return location.hostname;
+        return env.location.hostname;
       }
     },
     description: "The URL hostname, converted from Punycode to Unicode.",
   },
   "hostnameascii": {
-    compute: (location, title) => location.hostname,
+    compute: (env) => env.location.hostname,
     description: "The raw URL hostname, not converted from Punycode to Unicode.",
   },
   "port": {
-    compute: (location, title) => location.port && (":" + location.port),
+    compute: (env) => env.location.port && (":" + env.location.port),
     description: "The URL port, prefixed with '<code>:</code>' if not empty.",
   },
   "path": {
-    compute: (location, title) => location.pathname.replace(/^\/?/, ""),
+    compute: (env) => env.location.pathname.replace(/^\/?/, ""),
     description: "The URL path, without '<code>/</code>' prefix.",
   },
   "args": {
-    compute: (location, title) => location.search,
+    compute: (env) => env.location.search,
     description: "The URL arguments, prefixed with '<code>?</code>' if not empty.",
   },
   "hash": {
-    compute: (location, title) => location.hash,
+    compute: (env) => env.location.hash,
     description: "The URL hash, prefixed with '<code>#</code>' if not empty.",
   },
 };
@@ -100,9 +103,12 @@ function normalizeTitle(title) {
   return (title || '').trim().replace(/\s+/g, ' ');
 }
 
-function formatPageTitle(format, location, title) {
+/**
+ * env: same format as EXAMPLE_ENV
+ */
+function formatPageTitle(format, env) {
   return normalizeTitle(format.replace(FORMAT_REGEXP,
-      (format, tag) => TAGS[tag].compute(location, title)));
+      (format, tag) => TAGS[tag].compute(env)));
 }
 
 /**
@@ -116,13 +122,13 @@ function shouldProcessUrl(options, url) {
 }
 
 /**
+ * env: same format as EXAMPLE_ENV
  * previous_formatted_title_suffix: should be the formatted_title_suffix
  *   value returned by the previous call to formatPageTitleUpdate().
  *   Theoretically undefined but usually ok behavior if the format changes
  *   between two calls.
  */
-function formatPageTitleUpdate(
-    format, location, title, previous_formatted_title_suffix) {
+function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
   let formatted_title_suffix;
 
   // Heuristic to support pages that update their title and preserve the text
@@ -132,22 +138,25 @@ function formatPageTitleUpdate(
   const format_split = format.match(/^\{title\}([\s\S]*$)/);
   if (format_split && !format_split[1].match(/\{title\}/g)) {
     // Supported {title}-prefixed format: generate the title suffix.
-    formatted_title_suffix = formatPageTitle(format, location, '');
+    formatted_title_suffix =
+        formatPageTitle(format, Object.assign({title: ''}, env));
 
     // Strip the previous suffix from the title if present, to avoid
     // formatPageTitle() below appending another suffix to the previous one.
+    let title = env.title;
     if (previous_formatted_title_suffix &&
         title.endsWith(previous_formatted_title_suffix)) {
       title = title.substring(
           0, title.length - previous_formatted_title_suffix.length);
     }
+    env = Object.assign({title: title}, env);
   } else {
     // Not a {title}-prefixed format.
     formatted_title_suffix = null;
   }
 
   return {
-    formatted_title: formatPageTitle(format, location, title),
+    formatted_title: formatPageTitle(format, env),
     formatted_title_suffix: formatted_title_suffix,
   };
 }
@@ -158,13 +167,21 @@ class RequestHandlers {
   }
 
   static format_title_update(request, sendResponse) {
-    getOptions(options =>
+    getOptions(options => {
+      if (!shouldProcessUrl(options, request.filtering_url)) {
+        sendResponse(null);
+        return;
+      }
+
       sendResponse(
-          shouldProcessUrl(options, request.filtering_url)
-              ? formatPageTitleUpdate(
-                  options.format, request.location, request.title,
-                  request.previous_formatted_title_suffix)
-              : null));
+          formatPageTitleUpdate(
+              options.format,
+              {
+                location: request.location,
+                title: request.title,
+              },
+              request.previous_formatted_title_suffix));
+    });
   }
 }
 

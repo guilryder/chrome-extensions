@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   for (const tag in lib.TAGS) {
     const tag_name = '{' + tag + '}';
 
-    const example_value = lib.formatPageTitle(
-        tag_name, lib.LOCATION_FIELDS, lib.EXAMPLE_TITLE);
+    const example_value = lib.formatPageTitle(tag_name, lib.EXAMPLE_ENV);
 
     const row = tags_table.insertRow(-1);
     row.insertCell(-1).appendChild(createTextElem('kbd', tag_name));
@@ -26,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateExample() {
-  $('example').textContent = lib.formatPageTitle(
-      $('format').value, lib.LOCATION_FIELDS, lib.EXAMPLE_TITLE);
+  $('example').textContent =
+      lib.formatPageTitle($('format').value, lib.EXAMPLE_ENV);
 }
 
 function restoreOptions() {
