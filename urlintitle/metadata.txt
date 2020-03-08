@@ -1,4 +1,5 @@
 https://chrome.google.com/webstore/detail/apps-in-new-tab/mpojaelnfgiajhilmojddklffggldfbp
+https://microsoftedge.microsoft.com/addons/detail/ofmgkjflhpkiobhgebefnjncenhjciad
 
 Appends the domain name of each tab to their title.
 Reformats the title of each tab according to its URL.
@@ -8,3 +9,22 @@ This allows using utilities such as KeePass that auto-fill passwords according t
 By default, only the protocol and domain name are appended to the title, but the options page allows full customization.
 
 Source code: https://github.com/guilryder/chrome-extensions/tree/master/urlintitle
+
+
+Privacy - single purpose:
+Rename tabs to include their URL.
+
+Privacy - Host Permission:
+Renaming a tab requires executing a content script for that tab. Users need the extension to run automatically on all sites, without an explicit action: the "activeTab" permission is not enough.
+
+
+Search terms:
+url
+title
+tab
+
+
+Testing instructions:
+1. Open any URL, for instance: http://example.org
+2. Verify that the tab title contains the tab URL, for instance: "Example Domain - http://example.org/"
+3. Edit the extension options to customize the tab title format.

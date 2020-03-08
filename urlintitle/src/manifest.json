@@ -1,11 +1,16 @@
 {
   "manifest_version": 2,
-  "name": "Url in title",
-  "version": "3.0.0",
+  "name": "URL in title",
+  "version": "3.0.1",
 
   "description": "Appends the domain name of each tab to their title.",
-
   "author": "Guillaume Ryder",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+
   "background": {
     "scripts": ["background.js", "punycode.js"]
   },
@@ -22,6 +27,7 @@
 
   "options_ui": {
     "page": "options.html",
+    "open_in_tab": true,
     "chrome_style": true
   },
 
