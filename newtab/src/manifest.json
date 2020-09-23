@@ -4,6 +4,7 @@
   "version": "1.0.1",
 
   "description": "Shows the apps list when opening a new tab, after a delay to allow typing a URL right away.",
+  "author": "Guillaume Ryder",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",

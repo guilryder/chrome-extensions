@@ -4,6 +4,7 @@
   "version": "1.1.1",
 
   "description": "Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed.",
+  "author": "Guillaume Ryder",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
