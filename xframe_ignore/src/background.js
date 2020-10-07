@@ -1,5 +1,9 @@
 chrome.storage.sync.get("sites", function (data) {
-  const ALLOWED_SITES = data.sites;
+  let ALLOWED_SITES = data.sites;
+
+  if (!ALLOWED_SITES) {
+    ALLOWED_SITES = "<all_urls>";
+  }
   chrome.webRequest.onHeadersReceived.addListener(
     (details) => ({
       responseHeaders: details.responseHeaders.filter(
