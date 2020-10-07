@@ -1,9 +1,15 @@
+const HEADERS_TO_STRIP_LOWERCASE = [
+  "content-security-policy",
+  "x-frame-options",
+];
+
 chrome.storage.sync.get("sites", function (data) {
   let ALLOWED_SITES = data.sites;
 
   if (!ALLOWED_SITES) {
     ALLOWED_SITES = "<all_urls>";
   }
+
   chrome.webRequest.onHeadersReceived.addListener(
     (details) => ({
       responseHeaders: details.responseHeaders.filter(
@@ -17,8 +23,3 @@ chrome.storage.sync.get("sites", function (data) {
     ["blocking", "responseHeaders"]
   );
 });
-
-const HEADERS_TO_STRIP_LOWERCASE = [
-  "content-security-policy",
-  "x-frame-options",
-];
