@@ -14,10 +14,6 @@
   "background": {
     "scripts": ["background.js"]
   },
-  
-  "permissions": [
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>"
-  ]
+  "options_page": "options.html",
+  "permissions": ["storage", "webRequest", "webRequestBlocking", "<all_urls>"]
 }
