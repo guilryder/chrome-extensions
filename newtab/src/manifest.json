@@ -3,7 +3,7 @@
   "name": "Apps in new tab",
   "version": "1.0.1",
 
-  "description": "Shows the apps list when opening a new tab, after a delay to allow typing a URL right away.",
+  "description": "Shows the list of installed apps instead of the search page when opening a new tab.",
   "author": "Guillaume Ryder",
   "icons": {
     "16": "icon16.png",
