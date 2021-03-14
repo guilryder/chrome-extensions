@@ -23,4 +23,5 @@ Source code: https://github.com/guilryder/chrome-extensions/tree/main/xframe_ign
   * Single purpose: Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed for developement, testing, or troubleshooting purposes.
   * `webRequest` permission justification: Required to examine HTTP response headers.
   * `webRequestBlocking` permission justification: Required to remove HTTP response headers.
+  * `extraHeaders` permission justification: Required to remove X-Frame-Options headers starting from Chrome 89 (https://developer.chrome.com/docs/extensions/reference/webRequest/#life-cycle-of-requests).
   * Host permission justification: Generic developer tool that can filter HTTP response headers of any website.

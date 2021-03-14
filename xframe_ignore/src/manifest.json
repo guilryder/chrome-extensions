@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Ignore X-Frame headers",
-  "version": "1.1.1",
+  "version": "1.1.2",
 
   "description": "Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed.",
   "author": "Guillaume Ryder",
