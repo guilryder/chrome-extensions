@@ -1,5 +1,7 @@
 'use strict';
 
+importScripts('punycode.js', 'options_lib.js', 'title_lib.js');
+
 /**
  * Returns whether the given URL passes the filter (whitelist or blacklist).
  */

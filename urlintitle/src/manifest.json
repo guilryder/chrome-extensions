@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "URL in title",
   "version": "3.0.2",
 
@@ -12,12 +12,7 @@
   },
 
   "background": {
-    "scripts": [
-      "punycode.js",
-      "options_lib.js",
-      "title_lib.js",
-      "background.js"
-    ]
+    "service_worker": "background.js"
   },
 
   "content_scripts": [{
@@ -28,12 +23,11 @@
     "js": ["page_hook.js"],
     "run_at": "document_end"
   }],
-  "content_security_policy": "default-src 'none'; style-src 'unsafe-inline'; script-src 'self'",
-
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
+  "content_security_policy": {
+    "extension_pages": "default-src 'none'; style-src 'unsafe-inline'; script-src 'self'"
   },
+
+  "options_page": "options.html",
 
   "permissions": [
     "storage"
