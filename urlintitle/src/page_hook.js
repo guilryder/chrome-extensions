@@ -35,7 +35,7 @@ function requestUpdateTitle() {
   last_original_title = current_title;
   last_formatted_title = null;
 
-  chrome.extension.sendRequest({name: 'get_constants'}, updateTitle);
+  chrome.runtime.sendMessage({name: 'get_constants'}, updateTitle);
 }
 
 function updateTitle(constants) {
@@ -45,7 +45,7 @@ function updateTitle(constants) {
     field => location_copy[field] = document.location[field]);
 
   // Ask the background script to format the title.
-  chrome.extension.sendRequest(
+  chrome.runtime.sendMessage(
       {
         name: 'format_title_update',
         location: location_copy,

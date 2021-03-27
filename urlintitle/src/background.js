@@ -161,14 +161,14 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
   };
 }
 
-class RequestHandlers {
-  static get_constants(request, sendResponse) {
+class MessageHandlers {
+  static get_constants(message, sendResponse) {
     sendResponse({LOCATION_FIELDS: LOCATION_FIELDS});
   }
 
-  static format_title_update(request, sendResponse) {
+  static format_title_update(message, sendResponse) {
     getOptions(options => {
-      if (!shouldProcessUrl(options, request.filtering_url)) {
+      if (!shouldProcessUrl(options, message.filtering_url)) {
         sendResponse(null);
         return;
       }
@@ -177,14 +177,15 @@ class RequestHandlers {
           formatPageTitleUpdate(
               options.format,
               {
-                location: request.location,
-                title: request.title,
+                location: message.location,
+                title: message.title,
               },
-              request.previous_formatted_title_suffix));
+              message.previous_formatted_title_suffix));
     });
+    return true;  // async response
   }
 }
 
-chrome.extension.onRequest.addListener(
-  (request, sender, sendResponse) =>
-    RequestHandlers[request.name](request, sendResponse));
+chrome.runtime.onMessage.addListener(
+  (message, sender, sendResponse) =>
+    MessageHandlers[message.name](message, sendResponse));
