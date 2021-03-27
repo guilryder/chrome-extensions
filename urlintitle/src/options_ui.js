@@ -1,7 +1,5 @@
 'use strict';
 
-const lib = chrome.extension.getBackgroundPage();
-
 const REGEXPS_SEPARATOR = '\n';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,14 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   $('format').addEventListener('input', updateExample);
 
   const tags_table = $('tags-table');
-  for (const tag in lib.TAGS) {
+  for (const tag in TAGS) {
     const tag_name = '{' + tag + '}';
 
-    const example_value = lib.formatPageTitle(tag_name, lib.EXAMPLE_ENV);
+    const example_value = formatPageTitle(tag_name, EXAMPLE_ENV);
 
     const row = tags_table.insertRow(-1);
     row.insertCell(-1).appendChild(createTextElem('kbd', tag_name));
-    row.insertCell(-1).innerHTML = lib.TAGS[tag].description;
+    row.insertCell(-1).innerHTML = TAGS[tag].description;
     row.insertCell(-1).appendChild(createTextElem('code', example_value));
   }
 
@@ -26,11 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function updateExample() {
   $('example').textContent =
-      lib.formatPageTitle($('format').value, lib.EXAMPLE_ENV);
+      formatPageTitle($('format').value, EXAMPLE_ENV);
 }
 
 function restoreOptions() {
-  lib.getOptions(options => {
+  getOptions(options => {
     $('format').value = options.format;
     $('url-filter-type-' +
             (options.url_filter_is_whitelist ? 'whitelist' : 'blacklist'))
@@ -42,7 +40,7 @@ function restoreOptions() {
 }
 
 function restoreOptionsToDefault() {
-  lib.clearOptions(showOptionsSaved);
+  clearOptions(showOptionsSaved);
 }
 
 function saveOptions() {
@@ -59,7 +57,7 @@ function saveOptions() {
     }
   }
 
-  lib.setOptions(
+  setOptions(
     {
       format: $('format').value,
       url_filter_is_whitelist: $('url-filter-type-whitelist').checked,
