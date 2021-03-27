@@ -7,9 +7,8 @@ if (!document.head || document.head.getAttribute('urlintitle') == 'disabled') {
   return;
 }
 
-let title_mutation_observer = null;
-
 // The last known title set by the page, before formatting.
+// Reset to null after each update.
 let last_original_title = null;
 
 // The last formatted title before any browser post-processing.
@@ -23,15 +22,20 @@ let last_postprocessed_title = null;
 
 
 function requestUpdateTitle() {
-  // Detect the initial and subsequent, programmatic title changes.
-  if (last_postprocessed_title !== document.title) {
-    last_original_title = document.title;
-    last_formatted_title = null;
+  const current_title = document.title;
+
+  // Drop redundant update requests:
+  // - an update is already pending for the current title
+  // - the current title is the result if the last update
+  if (last_original_title === current_title ||
+      last_postprocessed_title === current_title) {
+    return;
   }
 
-  chrome.extension.sendRequest(
-    {name: 'get_constants'},
-    updateTitle);
+  last_original_title = current_title;
+  last_formatted_title = null;
+
+  chrome.extension.sendRequest({name: 'get_constants'}, updateTitle);
 }
 
 function updateTitle(constants) {
@@ -56,6 +60,7 @@ function updateTitle(constants) {
               result.formatted_title_suffix);
         }
       });
+  last_original_title = null;
 }
 
 function setFormattedTitle(formatted_title, formatted_title_suffix) {
@@ -66,31 +71,26 @@ function setFormattedTitle(formatted_title, formatted_title_suffix) {
     last_postprocessed_title = document.title;
     last_formatted_title_suffix = formatted_title_suffix;
   }
-
-  // Register the observer now that 'head > title' is guaranteed to exist.
-  if (!title_mutation_observer) {
-    registerTitleMutationObserver();
-  }
 }
 
 // Calls requestUpdateTitle() on future, programmatic title changes.
-// Can be called only once 'head > title' is guaranteed to exist.
+// Listens for all <head> updates, not just <title> because the page can delete
+// it with document.querySelector('head > title').remove().
+// Known limitation: do not handle document.head.remove() by listening for
+// all of document, because deleting <head> is unlikely and breaks the
+// connection between document.title and the tab title.
 function registerTitleMutationObserver() {
-  title_mutation_observer = new window.MutationObserver(
-      mutations => {
-        if (last_postprocessed_title !== document.title) {  // optimization
-          requestUpdateTitle();
-        }
-      });
-  title_mutation_observer.observe(
-      document.querySelector('head > title'),
+  const observer = new window.MutationObserver(
+      (mutations, observer) => requestUpdateTitle());
+  observer.observe(
+      document.head,
       {
         subtree: true,
-        characterData: true,
         childList: true,
       });
 }
 
 requestUpdateTitle();
+registerTitleMutationObserver();
 
 })();

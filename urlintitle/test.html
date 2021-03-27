@@ -70,6 +70,10 @@ function updateStatus(reason) {
   document.getElementById('status').textContent = statusLines.join('\n');
 }
 
+function deleteElement(selector) {
+  document.querySelector(selector).remove();
+}
+
 function setTitle(titleFunction) {
   const newTitle = titleFunction(document.title);
   document.getElementById('titleLog').textContent = 'setTitle: ' + newTitle;
@@ -85,6 +89,12 @@ window.addEventListener('popstate', function() {
   updateStatus('popstate');
 });
 </script>
+
+<h2>Delete element</h2>
+<p>
+  <button onclick="deleteElement('head > title')">Delete &lt;title&gt;</button>
+  <button onclick="deleteElement('head')">Delete &lt;head&gt;</button>
+</p>
 
 <h2>Set title</h2>
 <p>
