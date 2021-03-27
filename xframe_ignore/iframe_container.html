@@ -10,7 +10,8 @@
 <body onload="updateCustomIframeTarget();">
 
   <p><iframe src="iframe_content_xframe_http-equiv.html"></iframe>
-  <iframe src="iframe_content_xframe_header.php"></iframe>
+  <iframe src="iframe_content_xframe_header.php?x-frame-options=1"></iframe>
+  <iframe src="iframe_content_xframe_header.php?content-security-policy=1"></iframe>
 
   <form onsubmit="updateCustomIframeTarget(); return false;">
     <p><input id="custom_iframe_target" size="70" value="http://localhost"> <input type="submit" value="Go">
