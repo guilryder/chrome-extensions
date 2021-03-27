@@ -2,6 +2,11 @@
 
 (function() {
 
+// Ignore the page if <head> does not exist or <head urlintitle="disabled">.
+if (!document.head || document.head.getAttribute('urlintitle') == 'disabled') {
+  return;
+}
+
 let title_mutation_observer = null;
 
 // The last known title set by the page, before formatting.
@@ -86,8 +91,6 @@ function registerTitleMutationObserver() {
       });
 }
 
-if (!document.cannot_update_title) {
-  requestUpdateTitle();
-}
+requestUpdateTitle();
 
 })();
