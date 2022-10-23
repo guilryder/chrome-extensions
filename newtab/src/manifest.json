@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Apps in new tab",
-  "version": "1.0.1",
+  "version": "2.0.0",
 
   "description": "Shows the list of installed apps instead of the search page when opening a new tab.",
   "author": "Guillaume Ryder",
@@ -11,11 +11,7 @@
     "128": "icon128.png"
   },
 
-  "permissions": [
-    "tabs"
-  ],
   "chrome_url_overrides": {
     "newtab": "apps.html"
   }
 }
-

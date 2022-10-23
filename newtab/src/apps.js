@@ -1,8 +1,9 @@
-chrome.tabs.getCurrent(function(tab) {
-  window.setTimeout(function() {
-    chrome.tabs.update(tab.id, {
-      'url': 'chrome://apps'
-    });
-  }, 200);
-});
+'use strict';
 
+(async function() {
+  const [tab] = await chrome.tabs.query(
+      { active: true, lastFocusedWindow: true });
+  if (tab) {
+    chrome.tabs.update(tab.id, {'url': 'chrome://apps'});
+  }
+})();
