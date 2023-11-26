@@ -5,7 +5,7 @@
 Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed.
 
 ## Description
-Should be used only temporarily and only for development, testing, or troubleshooting purposes because it disables important browser security mechanisms.
+Should be used only temporarily and only for development, testing, or troubleshooting purposes because it disables important browser security mechanisms. Use at your own risk.
 
 No custom options or installation instructions: just install the extension and enable it on the relevant websites using the standard browser controls.
 
@@ -15,13 +15,15 @@ Reference:
 
 Source code: https://github.com/guilryder/chrome-extensions/tree/main/xframe_ignore
 
+Release notes:
+v2.0.0: reimplemented with declarativeNetRequest and Manifest V3, no functional change
+v1.2.2: Chrome 89 permission fix
+v1.1.1: added icons
+
 ## Metadata
 * Category: Developer Tools
 * Homepage URL: https://github.com/guilryder/chrome-extensions/tree/main/xframe_ignore
-* Support URL: https://github.com/guilryder/chrome-extensions/issues
+* Support URL: https://github.com/guilryder/chrome-extensions/issues?q=label:xframe_ignore
 * Privacy:
   * Single purpose: Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed for developement, testing, or troubleshooting purposes.
-  * `webRequest` permission justification: Required to examine HTTP response headers.
-  * `webRequestBlocking` permission justification: Required to remove HTTP response headers.
-  * `extraHeaders` permission justification: Required to remove X-Frame-Options headers starting from Chrome 89 (https://developer.chrome.com/docs/extensions/reference/webRequest/#life-cycle-of-requests).
-  * Host permission justification: Generic developer tool that can filter HTTP response headers of any website.
+  * `declarativeNetRequest` permission justification: Required to remove HTTP response headers.

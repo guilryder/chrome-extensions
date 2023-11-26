@@ -1,7 +1,7 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Ignore X-Frame headers",
-  "version": "1.1.2",
+  "version": "2.0.0",
 
   "description": "Drops X-Frame-Options and Content-Security-Policy HTTP response headers, allowing all pages to be iframed.",
   "author": "Guillaume Ryder",
@@ -11,13 +11,18 @@
     "128": "icon128.png"
   },
 
-  "background": {
-    "scripts": ["background.js"]
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "net_rules",
+      "enabled": true,
+      "path": "net_rules.json"
+    }]
   },
-  
+
   "permissions": [
-    "webRequest",
-    "webRequestBlocking",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
     "<all_urls>"
   ]
 }

@@ -26,7 +26,7 @@ function requestUpdateTitle() {
 
   // Drop redundant update requests:
   // - an update is already pending for the current title
-  // - the current title is the result if the last update
+  // - the current title is the result of the last update
   if (last_original_title === current_title ||
       last_postprocessed_title === current_title) {
     return;
