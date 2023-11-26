@@ -72,22 +72,22 @@ function error(type) {
  * @param {String} domain The domain name or email address.
  * @param {Function} callback The function that gets called for every
  * character.
- * @returns {Array} A new string of characters returned by the callback
+ * @returns {String} A new string of characters returned by the callback
  * function.
  */
-function mapDomain(string, fn) {
-	const parts = string.split('@');
+function mapDomain(domain, callback) {
+	const parts = domain.split('@');
 	let result = '';
 	if (parts.length > 1) {
 		// In email addresses, only the domain name should be punycoded. Leave
 		// the local part (i.e. everything up to `@`) intact.
 		result = parts[0] + '@';
-		string = parts[1];
+		domain = parts[1];
 	}
 	// Avoid `split(regex)` for IE8 compatibility. See #17.
-	string = string.replace(regexSeparators, '\x2E');
-	const labels = string.split('.');
-	const encoded = labels.map(fn).join('.');
+	domain = domain.replace(regexSeparators, '\x2E');
+	const labels = domain.split('.');
+	const encoded = labels.map(callback).join('.');
 	return result + encoded;
 }
 
@@ -100,13 +100,13 @@ function mapDomain(string, fn) {
  * the code point does not represent a value.
  */
 function basicToDigit(codePoint) {
-	if (codePoint - 0x30 < 0x0A) {
-		return codePoint - 0x16;
+	if (codePoint >= 0x30 && codePoint < 0x3A) {
+		return 26 + (codePoint - 0x30);
 	}
-	if (codePoint - 0x41 < 0x1A) {
+	if (codePoint >= 0x41 && codePoint < 0x5B) {
 		return codePoint - 0x41;
 	}
-	if (codePoint - 0x61 < 0x1A) {
+	if (codePoint >= 0x61 && codePoint < 0x7B) {
 		return codePoint - 0x61;
 	}
 	return base;
@@ -169,7 +169,7 @@ function decode(input) {
 		// which gets added to `i`. The overflow checking is easier
 		// if we increase `i` as we go, then subtract off its starting
 		// value at the end to obtain `delta`.
-		let oldi = i;
+		const oldi = i;
 		for (let w = 1, k = base; /* no condition */; k += base) {
 
 			if (index >= inputLength) {
@@ -178,7 +178,10 @@ function decode(input) {
 
 			const digit = basicToDigit(input.charCodeAt(index++));
 
-			if (digit >= base || digit > floor((maxInt - i) / w)) {
+			if (digit >= base) {
+				error('invalid-input');
+			}
+			if (digit > floor((maxInt - i) / w)) {
 				error('overflow');
 			}
 
