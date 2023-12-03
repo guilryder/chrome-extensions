@@ -139,7 +139,7 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
   if (format_split && !format_split[1].match(/\{title\}/g)) {
     // Supported {title}-prefixed format: generate the title suffix.
     formatted_title_suffix =
-        formatPageTitle(format, Object.assign({title: ''}, env));
+        formatPageTitle(format, Object.assign({}, env, {title: ''}));
 
     // Strip the previous suffix from the title if present, to avoid
     // formatPageTitle() below appending another suffix to the previous one.
@@ -149,7 +149,7 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
       title = title.substring(
           0, title.length - previous_formatted_title_suffix.length);
     }
-    env = Object.assign({title: title}, env);
+    env = Object.assign({}, env, {title: title});
   } else {
     // Not a {title}-prefixed format.
     formatted_title_suffix = null;
