@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(async () => {
 
 // Ignore the page if <head> does not exist or <head urlintitle="disabled">.
 if (!document.head || document.head.getAttribute('urlintitle') == 'disabled') {
@@ -21,7 +21,7 @@ let last_formatted_title_suffix = null;
 let last_postprocessed_title = null;
 
 
-function requestUpdateTitle() {
+async function maybeUpdateTitle() {
   const current_title = document.title;
 
   // Drop redundant update requests:
@@ -35,35 +35,32 @@ function requestUpdateTitle() {
   last_original_title = current_title;
   last_formatted_title = null;
 
-  chrome.runtime.sendMessage({name: 'get_constants'}, updateTitle);
+  await updateTitle();
 }
 
-function updateTitle(constants) {
+async function updateTitle() {
+  const constants = await chrome.runtime.sendMessage({name: 'get_constants'});
+
   // Explicitly copy the required location fields that Chrome strips out.
   const location_copy = {};
   Object.keys(constants.LOCATION_FIELDS).forEach(
     field => location_copy[field] = document.location[field]);
 
   // Ask the background script to format the title.
-  chrome.runtime.sendMessage(
-      {
-        name: 'format_title_update',
-        location: location_copy,
-        filtering_url: document.location.href,
-        title: last_original_title,
-        previous_formatted_title_suffix: last_formatted_title_suffix,
-      },
-      result => {
-        if (result) {
-          setFormattedTitle(
-              result.formatted_title,
-              result.formatted_title_suffix);
-        }
-      });
+  const update_msg = {
+    name: 'format_title_update',
+    location: location_copy,
+    filtering_url: document.location.href,
+    title: last_original_title,
+    previous_formatted_title_suffix: last_formatted_title_suffix,
+  };
   last_original_title = null;
-}
+  const result = await chrome.runtime.sendMessage(update_msg);
+  if (!result) {
+    return;
+  }
+  const {formatted_title, formatted_title_suffix} = result;
 
-function setFormattedTitle(formatted_title, formatted_title_suffix) {
   // Set the title only if it has changed, to avoid recursive notifications.
   if (last_formatted_title !== formatted_title) {
     last_formatted_title = formatted_title;
@@ -73,7 +70,7 @@ function setFormattedTitle(formatted_title, formatted_title_suffix) {
   }
 }
 
-// Calls requestUpdateTitle() on future, programmatic title changes.
+// Calls maybeUpdateTitle() on future, programmatic title changes.
 // Listens for all <head> updates, not just <title> because the page can delete
 // it with document.querySelector('head > title').remove().
 // Known limitation: do not handle document.head.remove() by listening for
@@ -81,16 +78,11 @@ function setFormattedTitle(formatted_title, formatted_title_suffix) {
 // connection between document.title and the tab title.
 function registerTitleMutationObserver() {
   const observer = new window.MutationObserver(
-      (mutations, observer) => requestUpdateTitle());
-  observer.observe(
-      document.head,
-      {
-        subtree: true,
-        childList: true,
-      });
+      (mutations, observer) => maybeUpdateTitle());
+  observer.observe(document.head, {subtree: true, childList: true});
 }
 
-requestUpdateTitle();
+await maybeUpdateTitle();
 registerTitleMutationObserver();
 
 })();

@@ -2,8 +2,8 @@
 
 const REGEXPS_SEPARATOR = '\n';
 
-document.addEventListener('DOMContentLoaded', () => {
-  $('restore').addEventListener('click', restoreOptionsToDefault);
+document.addEventListener('DOMContentLoaded', async () => {
+  $('default').addEventListener('click', resetOptionsToDefault);
   $('save').addEventListener('click', saveOptions);
   $('format').addEventListener('input', updateExample);
 
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     row.insertCell(-1).appendChild(createTextElem('code', example_value));
   }
 
-  restoreOptions();
+  await applyOptions();
 });
 
 function updateExample() {
@@ -27,23 +27,23 @@ function updateExample() {
       formatPageTitle($('format').value, EXAMPLE_ENV);
 }
 
-function restoreOptions() {
-  getOptions(options => {
-    $('format').value = options.format;
-    $('url-filter-type-' +
-            (options.url_filter_is_whitelist ? 'whitelist' : 'blacklist'))
-        .checked = true;
-    $('url-filter-regexps').value =
-        (options.url_filter_regexps || []).join(REGEXPS_SEPARATOR);
-    updateExample();
-  });
+async function applyOptions() {
+  const options = await getOptions();
+  $('format').value = options.format;
+  $('url-filter-type-' +
+          (options.url_filter_is_whitelist ? 'whitelist' : 'blacklist'))
+      .checked = true;
+  $('url-filter-regexps').value =
+      (options.url_filter_regexps || []).join(REGEXPS_SEPARATOR);
+  updateExample();
 }
 
-function restoreOptionsToDefault() {
-  clearOptions(showOptionsSaved);
+async function resetOptionsToDefault() {
+  await clearOptions();
+  await showOptionsSaved();
 }
 
-function saveOptions() {
+async function saveOptions() {
   // Validate the URL filter regexps.
   const url_filter_regexps =
       $('url-filter-regexps').value.split(REGEXPS_SEPARATOR);
@@ -57,28 +57,25 @@ function saveOptions() {
     }
   }
 
-  setOptions(
-    {
-      format: $('format').value,
-      url_filter_is_whitelist: $('url-filter-type-whitelist').checked,
-      url_filter_regexps: url_filter_regexps,
-    },
-    showOptionsSaved);
+  await setOptions({
+    format: $('format').value,
+    url_filter_is_whitelist: $('url-filter-type-whitelist').checked,
+    url_filter_regexps: url_filter_regexps,
+  });
+  await showOptionsSaved();
 }
 
-function showOptionsSaved() {
+async function showOptionsSaved() {
   const status = $('status');
   status.textContent = 'Options saved.';
   setTimeout(() => status.textContent = '', 1000);
 
-  restoreOptions();
+  await applyOptions();
 }
 
 // Helpers
 
-function $(id) {
-  return document.getElementById(id);
-}
+const $ = document.getElementById.bind(document);
 
 function createTextElem(tag_name, text) {
   const elem = document.createElement(tag_name);

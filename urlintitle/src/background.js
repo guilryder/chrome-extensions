@@ -24,8 +24,8 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
 
   // Heuristic to support pages that update their title and preserve the text
   // that the extension appends, such as:
-  // document.title = "prefix" + document.title;
-  // Supports only formats like: "{title}..." that contain only one {title} tag.
+  // document.title = 'prefix' + document.title;
+  // Supports only formats like: '{title}...' that contain only one {title} tag.
   const format_split = format.match(/^\{title\}([\s\S]*$)/);
   if (format_split && !format_split[1].match(/\{title\}/g)) {
     // Supported {title}-prefixed format: generate the title suffix.
@@ -53,30 +53,27 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
 }
 
 class MessageHandlers {
-  static get_constants(message, sendResponse) {
-    sendResponse({LOCATION_FIELDS: LOCATION_FIELDS});
+  static async get_constants(message) {
+    return {LOCATION_FIELDS: LOCATION_FIELDS};
   }
 
-  static format_title_update(message, sendResponse) {
-    getOptions(options => {
-      if (!shouldProcessUrl(options, message.filtering_url)) {
-        sendResponse(null);
-        return;
-      }
-
-      sendResponse(
-          formatPageTitleUpdate(
-              options.format,
-              {
-                location: message.location,
-                title: message.title,
-              },
-              message.previous_formatted_title_suffix));
-    });
-    return true;  // async response
+  static async format_title_update(message) {
+    const options = await getOptions();
+    if (!shouldProcessUrl(options, message.filtering_url)) {
+      return null;
+    }
+    return formatPageTitleUpdate(
+        options.format,
+        {
+          location: message.location,
+          title: message.title,
+        },
+        message.previous_formatted_title_suffix);
   }
 }
 
 chrome.runtime.onMessage.addListener(
-  (message, sender, sendResponse) =>
-    MessageHandlers[message.name](message, sendResponse));
+  (message, sender, sendResponse) => {
+    MessageHandlers[message.name](message).then(sendResponse);
+    return true;  // async response
+  });
