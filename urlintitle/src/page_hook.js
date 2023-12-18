@@ -1,5 +1,3 @@
-'use strict';
-
 (async () => {
 
 // Ignore the page if <head> does not exist or <head urlintitle="disabled">.

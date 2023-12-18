@@ -12,7 +12,7 @@
   },
 
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js", "type": "module"
   },
 
   "content_scripts": [{
@@ -23,9 +23,6 @@
     "js": ["page_hook.js"],
     "run_at": "document_end"
   }],
-  "content_security_policy": {
-    "extension_pages": "default-src 'none'; style-src 'unsafe-inline'; script-src 'self'"
-  },
 
   "options_page": "options.html",
 

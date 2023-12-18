@@ -1,4 +1,4 @@
-'use strict';
+import {normalizeTitle} from './title_lib.js';
 
 const DEFAULT_OPTIONS = {
   format: '{title} - {protocol}://{hostname}{port}/',
@@ -7,7 +7,7 @@ const DEFAULT_OPTIONS = {
 };
 
 // Name to example value.
-const LOCATION_FIELDS = {
+export const LOCATION_FIELDS = {
   'protocol': 'http',
   'hostname': 'www.xn--exmpl-hra2b.com',
   'port': 8080,
@@ -16,7 +16,7 @@ const LOCATION_FIELDS = {
   'hash': '#hash',
 };
 
-const EXAMPLE_ENV = {
+export const EXAMPLE_ENV = {
   location: LOCATION_FIELDS,
   title: 'My Example Page',
 };
@@ -29,17 +29,17 @@ function normalizeOptions(options) {
       (options.url_filter_regexps || []).filter(regexp => regexp != '');
 }
 
-async function getOptions() {
+export async function getOptions() {
   const options = await chrome.storage.sync.get(DEFAULT_OPTIONS);
   normalizeOptions(options);
   return options;
 }
 
-async function setOptions(options) {
+export async function setOptions(options) {
   normalizeOptions(options);
   await chrome.storage.sync.set(options);
 }
 
-async function clearOptions() {
+export async function clearOptions() {
   await chrome.storage.sync.clear();
 }

@@ -1,6 +1,6 @@
-'use strict';
+import {toUnicode} from './punycode.js';
 
-const TAGS = {
+export const TAGS = {
   'title': {
     compute: (env) => env.title,
     description: "The page title.",
@@ -44,14 +44,14 @@ const TAGS = {
 const FORMAT_REGEXP =
     new RegExp('{(' + Object.keys(TAGS).join('|') + ')}', 'g');
 
-function normalizeTitle(title) {
+export function normalizeTitle(title) {
   return (title || '').trim().replace(/\s+/g, ' ');
 }
 
 /**
  * env: same format as EXAMPLE_ENV
  */
-function formatPageTitle(format, env) {
+export function formatPageTitle(format, env) {
   return normalizeTitle(format.replace(FORMAT_REGEXP,
       (format, tag) => TAGS[tag].compute(env)));
 }

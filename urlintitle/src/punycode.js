@@ -23,8 +23,6 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 'use strict';
 
-const toUnicode = (function() {
-
 /** Highest positive signed 32-bit float value */
 const maxInt = 2147483647; // aka. 0x7FFFFFFF or 2^31-1
 
@@ -134,7 +132,7 @@ function adapt(delta, numPoints, firstTime) {
  * @param {String} input The Punycode string of ASCII-only symbols.
  * @returns {String} The resulting string of Unicode symbols.
  */
-function decode(input) {
+export function decode(input) {
 	// Don't use UCS-2.
 	const output = [];
 	const inputLength = input.length;
@@ -232,13 +230,10 @@ function decode(input) {
  * @returns {String} The Unicode representation of the given Punycode
  * string.
  */
-function toUnicode(input) {
+export function toUnicode(input) {
 	return mapDomain(input, function(string) {
 		return regexPunycode.test(string)
 			? decode(string.slice(4).toLowerCase())
 			: string;
 	});
 }
-
-return toUnicode;
-})();

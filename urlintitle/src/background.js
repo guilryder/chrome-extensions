@@ -1,6 +1,5 @@
-'use strict';
-
-importScripts('punycode.js', 'options_lib.js', 'title_lib.js');
+import * as Options from './options_lib.js';
+import {formatPageTitle} from './title_lib.js';
 
 /**
  * Returns whether the given URL passes the filter (whitelist or blacklist).
@@ -54,11 +53,11 @@ function formatPageTitleUpdate(format, env, previous_formatted_title_suffix) {
 
 class MessageHandlers {
   static async get_constants(message) {
-    return {LOCATION_FIELDS: LOCATION_FIELDS};
+    return {LOCATION_FIELDS: Options.LOCATION_FIELDS};
   }
 
   static async format_title_update(message) {
-    const options = await getOptions();
+    const options = await Options.getOptions();
     if (!shouldProcessUrl(options, message.filtering_url)) {
       return null;
     }

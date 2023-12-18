@@ -1,4 +1,5 @@
-'use strict';
+import * as Options from './options_lib.js';
+import * as Title from './title_lib.js';
 
 const REGEXPS_SEPARATOR = '\n';
 
@@ -8,14 +9,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('format').addEventListener('input', updateExample);
 
   const tags_table = $('tags-table');
-  for (const tag in TAGS) {
+  for (const tag in Title.TAGS) {
     const tag_name = '{' + tag + '}';
 
-    const example_value = formatPageTitle(tag_name, EXAMPLE_ENV);
+    const example_value = Title.formatPageTitle(tag_name, Options.EXAMPLE_ENV);
 
     const row = tags_table.insertRow(-1);
     row.insertCell(-1).appendChild(createTextElem('kbd', tag_name));
-    row.insertCell(-1).innerHTML = TAGS[tag].description;
+    row.insertCell(-1).innerHTML = Title.TAGS[tag].description;
     row.insertCell(-1).appendChild(createTextElem('code', example_value));
   }
 
@@ -24,11 +25,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function updateExample() {
   $('example').textContent =
-      formatPageTitle($('format').value, EXAMPLE_ENV);
+      Title.formatPageTitle($('format').value, Options.EXAMPLE_ENV);
 }
 
 async function applyOptions() {
-  const options = await getOptions();
+  const options = await Options.getOptions();
   $('format').value = options.format;
   $('url-filter-type-' +
           (options.url_filter_is_whitelist ? 'whitelist' : 'blacklist'))
@@ -39,7 +40,7 @@ async function applyOptions() {
 }
 
 async function resetOptionsToDefault() {
-  await clearOptions();
+  await Options.clearOptions();
   await showOptionsSaved();
 }
 
@@ -57,7 +58,7 @@ async function saveOptions() {
     }
   }
 
-  await setOptions({
+  await Options.setOptions({
     format: $('format').value,
     url_filter_is_whitelist: $('url-filter-type-whitelist').checked,
     url_filter_regexps: url_filter_regexps,
