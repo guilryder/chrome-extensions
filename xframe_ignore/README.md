@@ -16,9 +16,9 @@ Reference:
 Source code: https://github.com/guilryder/chrome-extensions/tree/main/xframe_ignore
 
 Release notes:
-v2.0.0: reimplemented with declarativeNetRequest and Manifest V3, no functional change
-v1.2.2: Chrome 89 permission fix
-v1.1.1: added icons
+* v2.0.0: reimplemented with declarativeNetRequest and Manifest V3, no functional change
+* v1.2.2: Chrome 89 permission fix
+* v1.1.1: added icons
 
 ## Metadata
 * Category: Developer Tools
