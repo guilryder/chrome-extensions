@@ -12,8 +12,13 @@ By default, only the protocol and domain name are appended to the title, but the
 
 Source code: https://github.com/guilryder/chrome-extensions/tree/main/urlintitle
 
+Release notes:
+* v4.0.0: restored suffix preservation logic broken in previous version; migrated to Manifest V3; cleaned up the code
+* v3.0.2: added a mechanism to disable the extension (`<head urlintitle="disabled">`); added support for pages that delete the `<title>` element
+* v3.0.1: added icons
+
 ## Metadata
-* Category: Productivity
+* Category: Functionality & UI
 * Homepage URL: https://github.com/guilryder/chrome-extensions/tree/main/urlintitle
 * Support URL: https://github.com/guilryder/chrome-extensions/issues
 * Privacy:
